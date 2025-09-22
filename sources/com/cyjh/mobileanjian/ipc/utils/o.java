@@ -1,0 +1,41 @@
+package com.cyjh.mobileanjian.ipc.utils;
+
+import android.content.Context;
+import android.support.annotation.NonNull;
+import com.cyjh.mq.sdk.entity.Script4Run;
+import java.io.File;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+
+public final class o {
+
+    /* renamed from: a  reason: collision with root package name */
+    private static final String f2722a = "script";
+
+    private static Script4Run a(Context context, @NonNull Script4Run script4Run) throws Exception {
+        File file = new File(context.getFilesDir(), f2722a);
+        if (!file.exists()) {
+            file.mkdirs();
+            file.setReadable(true, false);
+            file.setExecutable(true, false);
+        } else {
+            FileUtils.deleteDirectory(file);
+        }
+        File[] fileArr = {new File(script4Run.getLcPath()), new File(script4Run.getAtcPath()), new File(script4Run.getConfigPath())};
+        File file2 = new File(file, FilenameUtils.getName(script4Run.getLcPath()));
+        File file3 = new File(file, FilenameUtils.getName(script4Run.getAtcPath()));
+        File file4 = new File(file, FilenameUtils.getName(script4Run.getConfigPath()));
+        File[] fileArr2 = {file2, file3, file4};
+        for (int i = 0; i < 3; i++) {
+            if (fileArr[i].exists()) {
+                FileUtils.copyFile(fileArr[i], fileArr2[i]);
+                fileArr2[i].setReadable(true, false);
+            } else {
+                fileArr2[i] = fileArr[i];
+            }
+        }
+        Script4Run clone = script4Run.clone();
+        clone.setLcPath(file2.getAbsolutePath()).setAtcPath(file3.getAbsolutePath()).setConfigPath(file4.getAbsolutePath());
+        return clone;
+    }
+}
